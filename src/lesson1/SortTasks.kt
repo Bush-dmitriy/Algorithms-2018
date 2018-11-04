@@ -2,6 +2,10 @@
 
 package lesson1
 
+import java.io.File
+import java.io.IOException
+import java.util.*
+
 /**
  * Сортировка времён
  *
@@ -60,8 +64,38 @@ fun sortTimes(inputName: String, outputName: String) {
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
+//T = O(N*logN) R = O(N^2)
 fun sortAddresses(inputName: String, outputName: String) {
-    TODO()
+
+    val outputStream = File(outputName).bufferedWriter()
+    val map: SortedMap<String, MutableList<String>> = sortedMapOf()
+    val e = IOException("Illegal file format")
+
+    for (line in File(inputName).readLines()) {
+        if (!line.matches(Regex("""[А-Я][а-я]+\s[А-Я][а-я]+\s[-]\s[А-Я][а-я]+\s\d+"""))) throw e
+        if (!map.containsKey(line.split(" - ")[1])) {
+            map.put(line.split(" - ")[1], mutableListOf(line.split(" - ")[0]))
+        } else {
+            val list = map.get(line.split(" - ")[1])
+            list!!.add(line.split(" - ")[0])
+            map.replace(line.split(" - ")[1], list)
+        }
+    }
+
+    for (key in map.keys) {
+        val nameSortedList = map.get(key)!!.sorted()
+        outputStream.write("$key - ")
+        for (i in 0 until nameSortedList.size) {
+            outputStream.write(nameSortedList[i])
+            if (i != nameSortedList.size - 1) {
+                outputStream.write(", ")
+            }
+        }
+        if (key != map.keys.last()) {
+            outputStream.newLine()
+        }
+    }
+    outputStream.close()
 }
 
 /**
@@ -94,8 +128,23 @@ fun sortAddresses(inputName: String, outputName: String) {
  * 99.5
  * 121.3
  */
+//T = O(N*logN) R = O(N)
 fun sortTemperatures(inputName: String, outputName: String) {
-    TODO()
+
+    val outputStream = File(outputName).bufferedWriter()
+    val list = mutableListOf<Double>()
+    val e = IOException("Illegal file format")
+
+    for (line in File(inputName).readLines()) {
+        if (!line.matches(Regex("""-?(\d{1,3})[.]\d"""))) throw e
+        list.add(line.toDouble())
+    }
+
+    for (element in list.sorted()) {
+        outputStream.write(element.toString())
+        outputStream.newLine()
+    }
+    outputStream.close()
 }
 
 /**
@@ -148,4 +197,3 @@ fun sortSequence(inputName: String, outputName: String) {
 fun <T : Comparable<T>> mergeArrays(first: Array<T>, second: Array<T?>) {
     TODO()
 }
-
