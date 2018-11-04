@@ -2,6 +2,9 @@
 
 package lesson2
 
+import java.io.File
+import java.io.IOException
+
 /**
  * Получение наибольшей прибыли (она же -- поиск максимального подмассива)
  * Простая
@@ -26,8 +29,31 @@ package lesson2
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
+//T = O(N) R = O(1)
 fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> {
-    TODO()
+
+    var min = Integer.MAX_VALUE
+    var max = 0
+    var lineOfMinValue = 0
+    var lineOfMaxValue = 0
+    var currentLine = 0
+    val e = IOException("Illegal file format")
+
+    for (line in 0 until File(inputName).readLines().size) {
+        if (!File(inputName).readLines()[line].matches(Regex("""\d+"""))) throw e
+        if (File(inputName).readLines()[line].toInt() < min) {
+            min = File(inputName).readLines()[line].toInt()
+            currentLine = line
+        } else {
+            if (File(inputName).readLines()[line].toInt() - min > max) {
+                max = File(inputName).readLines()[line].toInt() - min
+                lineOfMinValue = currentLine
+                lineOfMaxValue = line
+            }
+        }
+    }
+
+    return Pair(lineOfMinValue + 1, lineOfMaxValue + 1)
 }
 
 /**
@@ -91,8 +117,69 @@ fun josephTask(menNumber: Int, choiceInterval: Int): Int {
  * Если имеется несколько самых длинных общих подстрок одной длины,
  * вернуть ту из них, которая встречается раньше в строке first.
  */
+//T = O(firstLength*secondLength) R=O(1)
 fun longestCommonSubstring(first: String, second: String): String {
-    TODO()
+
+    var currentLength = 0
+    var maxLength = 0
+    var currentColumn = -1
+
+    for (diagonal in (second.length - 1) downTo 0) {
+        var i = 0
+        var j = diagonal
+        while (j < second.length && i < first.length) {
+            if (first[i] == second[j]) {
+                currentLength++
+                if (j == second.length - 1 || i == first.length - 1) {
+                    if (currentLength >= maxLength) {
+                        maxLength = currentLength
+                        currentColumn = i
+                    }
+                    currentLength = 0
+                }
+            } else {
+                if (currentLength != 0) {
+                    if (currentLength >= maxLength) {
+                        maxLength = currentLength
+                        currentColumn = i - 1
+                    }
+                    currentLength = 0
+                }
+            }
+            j++
+            i++
+        }
+    }
+    for (diagonal in 1 until (first.length - 1)) {
+        var i = diagonal
+        var j = 0
+        while (j < second.length && i < first.length) {
+            if (first[i] == second[j]) {
+                currentLength++
+                if (j == second.length - 1 || i == first.length - 1) {
+                    if (currentLength > maxLength) {
+                        maxLength = currentLength
+                        currentColumn = i
+                    }
+                    currentLength = 0
+                }
+            } else {
+                if (currentLength != 0) {
+                    if (currentLength > maxLength) {
+                        maxLength = currentLength
+                        currentColumn = i - 1
+                    }
+                    currentLength = 0
+                }
+            }
+            j++
+            i++
+        }
+    }
+    return if (currentColumn == -1) ""
+    else {
+        first.substring(currentColumn - (maxLength - 1), currentColumn + 1)
+    }
 }
 
 /**
