@@ -2,6 +2,8 @@
 
 package lesson5
 
+import java.util.*
+
 /**
  * Эйлеров цикл.
  * Средняя
@@ -29,8 +31,48 @@ package lesson5
  * связного графа ровно по одному разу
  */
 fun Graph.findEulerLoop(): List<Graph.Edge> {
-    TODO()
+    val path: Deque<Graph.Vertex> = LinkedList()
+    val path2: Deque<Graph.Vertex> = LinkedList()
+    val visited = mutableListOf<Graph.Edge>()
+    if (!this.checkEuler()) return listOf()
+    val a = this.vertices.first()
+    path.addFirst(a)
+    while (!path.isEmpty()) {
+        val x = path.first
+        for (edge in this.getConnections(x).values) {
+            if (!visited.contains(edge)) {
+                visited.add(edge)
+                if (edge.end == path.first) {
+                    path.addFirst(edge.begin)
+                } else {
+                    path.addFirst(edge.end)
+                }
+                break
+            } else {
+                if (edge == this.getConnections(x).values.last()) {
+                    path2.addFirst(x)
+                    path.removeFirst()
+                } else {
+                    continue
+                }
+            }
+        }
+    }
+    val listOfEdges = mutableListOf<Graph.Edge>()
+    for (i in 0 until path2.size - 1) {
+        listOfEdges.add(this.getConnection(path2.toList()[i], path2.toList()[i + 1])
+                ?: this.getConnection(path2.toList()[i + 1], path2.toList()[i])!!)
+    }
+    return listOfEdges
 }
+
+fun Graph.checkEuler(): Boolean {
+    for (vertex in this.vertices) {
+        if (this.getConnections(vertex).size % 2 == 1) return false
+    }
+    return true
+}
+
 
 /**
  * Минимальное остовное дерево.
@@ -89,7 +131,52 @@ fun Graph.minimumSpanningTree(): Graph {
  * Эта задача может быть зачтена за пятый и шестой урок одновременно
  */
 fun Graph.largestIndependentVertexSet(): Set<Graph.Vertex> {
-    TODO()
+    val thisVertices = this.vertices
+    val resultSet: MutableSet<Graph.Vertex> = mutableSetOf()
+    val visitedSet: MutableSet<Graph.Vertex> = mutableSetOf()
+    var currentVertex: Graph.Vertex
+    val queue: Queue<Graph.Vertex> = LinkedList()
+    
+    var currentCount = 0
+    var currentCount2 = 1
+    var temp = 0
+    var temp2 = 0
+
+    resultSet.add(this.vertices.first())
+    queue.add(this.vertices.first())
+    while (!queue.isEmpty()) {
+        currentVertex = queue.poll()
+        visitedSet.add(currentVertex)
+
+        if (currentCount2 > 0) {
+            resultSet.add(currentVertex)
+        }
+        for (vertex in this.getNeighbors(currentVertex)) {
+            if (visitedSet.contains(vertex)) continue
+            queue.offer(vertex)
+            when{
+                currentCount > 0 -> temp2++
+                currentCount2 > 0 ->  temp++
+            }
+        }
+        when {
+            currentCount > 0 -> currentCount--
+            currentCount2 > 0 -> currentCount2--
+        }
+        if (currentCount == 0 && currentCount2 == 0) {
+            currentCount = temp
+            temp = 0
+            currentCount2 = temp2
+            temp2 = 0
+        }
+    }
+    return when {
+        resultSet.size >= thisVertices.size / 2 -> resultSet
+        else -> {
+            thisVertices.removeAll(resultSet)
+            thisVertices
+        }
+    }
 }
 
 /**
