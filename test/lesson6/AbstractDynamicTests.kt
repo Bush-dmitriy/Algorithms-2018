@@ -29,6 +29,8 @@ abstract class AbstractDynamicTests {
 Наследник всех своих родных.
                 """.trimIndent()
         ))
+        assertEquals("", longestCommonSubSequence("", ""))
+        assertEquals("ж", longestCommonSubSequence("жжжж", "ж"))
     }
 
     fun longestIncreasingSubSequence(longestIncreasingSubSequence: (List<Int>) -> List<Int>) {

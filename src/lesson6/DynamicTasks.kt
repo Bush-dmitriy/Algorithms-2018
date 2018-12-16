@@ -13,9 +13,38 @@ package lesson6
  * Если общей подпоследовательности нет, вернуть пустую строку.
  * При сравнении подстрок, регистр символов *имеет* значение.
  */
+
+/**
+ * T = O(N*M), где N - first.length, M - second.length
+ * R = O(N*M), где N - first.length, M - second.length
+ */
+
 fun longestCommonSubSequence(first: String, second: String): String {
-    TODO()
+    var result = ""
+    val max = Array(first.length + 1) { IntArray(second.length + 1) }
+    for (i in 1 until max.size) {
+        for (j in 1 until max[i].size) {
+            if (first[i - 1] == second[j - 1]) {
+                max[i][j] = 1 + max[i - 1][j - 1]
+            } else max[i][j] = Math.max(max[i - 1][j], max[i][j - 1])
+        }
+    }
+    var i = first.length
+    var j = second.length
+    while (i > 0 && j > 0) {
+        when {
+            first[i - 1] == second[j - 1] -> {
+                result = first[i - 1] + result
+                i--
+                j--
+            }
+            max[i][j] == max[i - 1][j] -> i--
+            else -> j--
+        }
+    }
+    return result
 }
+
 
 /**
  * Наибольшая возрастающая подпоследовательность
