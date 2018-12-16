@@ -136,7 +136,7 @@ fun Graph.largestIndependentVertexSet(): Set<Graph.Vertex> {
     val visitedSet: MutableSet<Graph.Vertex> = mutableSetOf()
     var currentVertex: Graph.Vertex
     val queue: Queue<Graph.Vertex> = LinkedList()
-    
+
     var currentCount = 0
     var currentCount2 = 1
     var temp = 0
