@@ -30,6 +30,12 @@ import java.util.*
  * Справка: Эйлеров цикл -- это цикл, проходящий через все рёбра
  * связного графа ровно по одному разу
  */
+
+/**
+ * T = O(N)
+ * R = O(N), где N - вершины + ребра графа
+ */
+
 fun Graph.findEulerLoop(): List<Graph.Edge> {
     val path: Deque<Graph.Vertex> = LinkedList()
     val path2: Deque<Graph.Vertex> = LinkedList()
@@ -130,6 +136,12 @@ fun Graph.minimumSpanningTree(): Graph {
  *
  * Эта задача может быть зачтена за пятый и шестой урок одновременно
  */
+
+/**
+ * T = O(N), где N - кол-во вершин
+ * R = O(N)
+ */
+
 fun Graph.largestIndependentVertexSet(): Set<Graph.Vertex> {
     val thisVertices = this.vertices
     val resultSet: MutableSet<Graph.Vertex> = mutableSetOf()
